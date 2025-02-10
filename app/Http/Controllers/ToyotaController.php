@@ -14,7 +14,9 @@ class ToyotaController extends Controller
      */
     public function index()
     {
-        //
+        $toyotas = Toyota::latest()->paginate(10);
+        return view('toyotas.index', compact('toyotas'))
+            ->with(request()->input('page', 1));
     }
 
     /**
@@ -47,7 +49,7 @@ class ToyotaController extends Controller
 
         //redirect to the index page
         return redirect()->route('toyotas.index')
-            ->with('success', 'New Toyota created successfully.');
+            ->with('success', 'New car created successfully.');
     }
 
     /**
@@ -58,7 +60,7 @@ class ToyotaController extends Controller
      */
     public function show(Toyota $toyota)
     {
-        //
+        return view('toyotas.show', compact('toyota'));
     }
 
     /**
@@ -69,7 +71,7 @@ class ToyotaController extends Controller
      */
     public function edit(Toyota $toyota)
     {
-        //
+        return view('toyotas.edit', compact('toyota'));
     }
 
     /**
@@ -81,7 +83,18 @@ class ToyotaController extends Controller
      */
     public function update(Request $request, Toyota $toyota)
     {
-        //
+        $request->validate([
+            'model' => 'required',
+            'engine' => 'required',
+            'price' => 'required',
+        ]);
+
+        //create new product
+        $toyota->update($request->all());
+
+        //redirect to the index page
+        return redirect()->route('toyotas.index')
+            ->with('success', 'Car updated successfully.');
     }
 
     /**
@@ -92,6 +105,8 @@ class ToyotaController extends Controller
      */
     public function destroy(Toyota $toyota)
     {
-        //
+        $toyota->delete();
+        return redirect()->route('toyotas.index')
+            ->with('success', 'Car deleted successfully.');
     }
 }
